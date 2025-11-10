@@ -1,16 +1,29 @@
-# This is a sample Python script.
+# 先安装专用包（如果可用）
+# pip install langchain-deepseek
 
-# Press Alt+Shift+X to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from langchain.agents import create_agent
+from langchain_deepseek import ChatDeepSeek  # 或从相应包导入
+import os
+
+def get_weather(city: str) -> str:
+    """Get weather for a given city."""
+    return f"It's always sunny in {city}!"
+
+# 使用DeepSeek专用类
+llm = ChatDeepSeek(
+    model="deepseek-chat",
+    api_key=os.environ.get('DEEPSEEK_API_KEY'),  # 替换为你的API密钥
+    temperature=0.7
+)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+Shift+B to toggle the breakpoint.
+agent = create_agent(
+    model=llm,
+    tools=[get_weather],
+    system_prompt="You are a helpful assistant",
+)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+res = agent.invoke(
+    {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
+)
+print(res)
