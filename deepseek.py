@@ -1,18 +1,13 @@
-# Please install OpenAI SDK first: `pip3 install openai`
+from langchain.chat_models import init_chat_model
 import os
-from openai import OpenAI
 
-client = OpenAI(
-    api_key=os.environ.get('DEEPSEEK_API_KEY'),
-    base_url="https://api.deepseek.com")
-
-response = client.chat.completions.create(
-    model="deepseek-chat",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant"},
-        {"role": "user", "content": "你好"},
-    ],
-    stream=False
+model = init_chat_model(
+    model='deepseek-reasoner', # deepseek-chat表示调用DeepSeek-v3模型，deepseek-reasoner表示调用DeepSeek-R1模型，
+    model_provider='deepseek',# 模型提供商写deepseek
+    api_key=os.environ.get('DEEPSEEK_API_KEY'),#你注册的deepseek api_key
 )
 
-print(response.choices[0].message.content)
+question="你好，请介绍一下你自己"
+
+result = model.invoke(question)
+print(result)
